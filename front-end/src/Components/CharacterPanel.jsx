@@ -1,9 +1,10 @@
 import React from 'react'
+import { useEffect } from 'react'
 
 const CharacterPanel = ({ character }) => {
     const attributeList = () => {
         return character.getAttributes()?.map((e, i) =>
-            <li key={i}>{`${e.name}${e.value ? `: ${e.value}` : ""}`}</li>
+            <li key={i}>{`${e.name}${e.current ? `: ${e.current}` : `${e.value ? `: ${e.value}` : ""}`}`}</li>
         )
     }
 

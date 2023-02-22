@@ -22,14 +22,19 @@ export default class Sheet {
             }
             value = this.sheet?.attributes?.find(element => {
                 return element.attr_id === a.id
-            })?.calc?.current ? this.sheet?.attributes?.find(element => {
-                return element.attr_id === a.id
-            })?.calc?.current : this.sheet?.attributes?.find(element => {
-                return element.attr_id === a.id
             })?.calc?.value;
             attributes.push({ name, value });
         }
         return attributes;
+    }
+
+    damage(damage) {
+        this.sheet.attributes = this.sheet.attributes.map(e => {
+            if (e.attr_id === "hp") {
+                e.calc.current -= damage;
+            }
+            return e;
+        })
     }
 
     hasAttribute(attribute) {
@@ -102,7 +107,7 @@ export default class Sheet {
         let meleeWeapons = [];
         for (let p of possibleMeleeWeaponsList) {
             let name, usage, reach, skillLevel, strength, parry, block, damage;
-            if (!p?.weapons) continue;
+            if (!p.weapons) continue;
             for (let w of p.weapons) {
                 if (w.type === "melee_weapon") {
                     name = p?.description ? p.description : p.name;
@@ -120,15 +125,7 @@ export default class Sheet {
         return meleeWeapons;
     }
 
-    getParryWeapons() {
-        return this.getMeleeWeapons().filter((e) => {
-            return e.parry !== "No";
-        })
-    }
-
-    getBlockWeapons() {
-        return this.getMeleeWeapons().filter((e) => {
-            return e.block !== "No";
-        })
+    getDodge() {
+        return this.sheet.calc.dodge[0];
     }
 }

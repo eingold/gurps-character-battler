@@ -52,7 +52,17 @@ As a user, so that my character can be more survivable, I want the app to subtra
 
 As a user, so that combat is more streamlined, I want the app to automatically calculate roll a death save when my character passes the relevant health threshold.
 
-
-
-
+As a user, so that I can keep track of the battle, I want the app to display a log of the different manouevres taken and their outcomes.
 ```
+
+Data models
+===============
+## Front end
+| Data needed    | Components     | State owner   | Request type | Request body                                                            | Request URL |
+| -------------- | -------------- | ------------- | ------------ | ----------------------------------------------------------------------- | ----------- |
+| Send manouevre | Manouevre form | ManouevreForm | POST         | {manouevre, modifiers, actor, target, attackingWeapon, defendingWeapon} | /manoeuvre  |
+
+## Back end
+| Data request                                                                           | API route  | Request type | Request body                                                            | Response status | Response data                                      |
+| -------------------------------------------------------------------------------------- | ---------- | ------------ | ----------------------------------------------------------------------- | --------------- | -------------------------------------------------- |
+| Process a manouevre, calculate its outcome, and send back the updated character sheets | /manoeuvre | POST         | {manouevre, modifiers, actor, target, attackingWeapon, defendingWeapon} | 200             | {defenceNeeded, modifiers, actor, target, logText} |

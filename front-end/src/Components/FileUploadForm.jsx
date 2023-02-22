@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react';
 import Sheet from '../utils/sheet';
 
-export const FileUploadForm = ({ setCharacter }) => {
+const FileUploadForm = ({ setCharacter }) => {
 
     const [file, setFile] = useState("");
 
@@ -26,3 +26,5 @@ export const FileUploadForm = ({ setCharacter }) => {
         </form>
     )
 }
+
+export default FileUploadForm;
