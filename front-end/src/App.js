@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import FileUploadForm from './Components/FileUploadForm';
 import CharacterPanel from './Components/CharacterPanel';
 import ManoeuvreForm from './Components/ManoeuvreForm';
@@ -36,7 +36,7 @@ function App() {
           </div>
         </div>
         <div className="row">
-          <TextLog logText={logText} />
+          <TextLog logText={logText} setLogText={setLogText} />
         </div>
       </div>
     </div>

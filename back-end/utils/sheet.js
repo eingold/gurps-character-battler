@@ -172,7 +172,7 @@ export default class Sheet {
                 return Math.floor(damage * 1.5);
             case "huge piercing":
                 return damage * 2;
-            case "burn":
+            case "burning":
                 return damage;
             case "corrosion":
                 return damage;
@@ -181,6 +181,8 @@ export default class Sheet {
             case "fatigue":
                 return damage;
             case "injury":
+                return damage;
+            default:
                 return damage;
         }
     }
@@ -221,7 +223,7 @@ export default class Sheet {
             case "huge piercing":
                 woundingModifier = "×2";
                 break;
-            case "burn":
+            case "burning":
                 woundingModifier = "×1";
                 break;
             case "corrosion":
@@ -236,16 +238,19 @@ export default class Sheet {
             case "injury":
                 woundingModifier = "×1";
                 break;
+            default:
+                woundingModifier = "×1";
+                break;
         }
         const injury = this.calculateInjury(penetratingDamage, type, location);
         if (type === "fatigue") {
             logText += `Wounding modifier of ${woundingModifier} for ${type} damage converts this to ${injury} points of fatigue\n`;
-            logText += `${name} takes ${injury} points of fatigue`;
+            logText += `${name} takes ${injury} points of fatigue\n`;
             this.applyFatigue(injury);
             return logText;
         }
         logText += `Wounding modifier of ${woundingModifier} for ${type} damage converts this to ${injury} points of injury\n`;
-        logText += `${name} takes ${injury} points of injury`;
+        logText += `${name} takes ${injury} points of injury\n`;
         this.applyInjury(injury);
         return logText;
     }
