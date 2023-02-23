@@ -28,9 +28,18 @@ export default class Sheet {
         return attributes;
     }
 
-    damage(damage) {
+    applyInjury(damage) {
         this.sheet.attributes = this.sheet.attributes.map(e => {
             if (e.attr_id === "hp") {
+                e.calc.current -= damage;
+            }
+            return e;
+        })
+    }
+
+    applyFatigue(damage) {
+        this.sheet.attributes = this.sheet.attributes.map(e => {
+            if (e.attr_id === "fp") {
                 e.calc.current -= damage;
             }
             return e;
@@ -127,5 +136,117 @@ export default class Sheet {
 
     getDodge() {
         return this.sheet.calc.dodge[0];
+    }
+
+    getDamageResistance(location = "Torso", type = "crushing") {
+        const bodyPlan = this.sheet.settings.body_type.locations;
+        let bodyPart;
+        if (!bodyPlan.some(e => e.table_name === location)) {
+            return 0;
+        } else {
+            bodyPart = bodyPlan.find(e => e.table_name === location);
+        }
+        return bodyPart.calc.dr.all + (type in bodyPart.calc.dr ? bodyPart.calc.dr[type] : 0);
+    }
+
+    penetratingDamage(damage, type, location = "Torso") {
+        return Math.max(damage - this.getDamageResistance(location, type), 0)
+    }
+
+    calculateInjury(damage, type, location = "Torso") {
+        console.log(damage);
+        console.log(type);
+        switch (type) {
+            case "crushing":
+                return damage;
+            case "cutting":
+                return Math.floor(damage * 1.5);
+            case "impaling":
+                return damage * 2;
+            case "small piercing":
+                if (damage === 1) return 1;
+                return Math.floor(damage * 0.5);
+            case "piercing":
+                return damage;
+            case "large piercing":
+                return Math.floor(damage * 1.5);
+            case "huge piercing":
+                return damage * 2;
+            case "burn":
+                return damage;
+            case "corrosion":
+                return damage;
+            case "toxic":
+                return damage;
+            case "fatigue":
+                return damage;
+            case "injury":
+                return damage;
+        }
+    }
+
+    damage(damage, type, logText, location = "Torso") {
+        const name = this.getCharacterName();
+        logText += `${name} is hit for ${damage} points of ${type} damage\n`;
+        const penetratingDamage = this.penetratingDamage(damage, type, location);
+        if (this.getDamageResistance(location, type) > 0) {
+            logText += `${name}'s ${location} DR of ${this.getDamageResistance(location, type)} against ${type} damage reduces it to ${penetratingDamage} penetrating damage\n`;
+        } else {
+            logText += `${name} has no ${location} DR against ${type} damage\n`;
+        }
+        if (penetratingDamage === 0) {
+            logText += `No damage penetrates ${name}'s DR\n`;
+            return logText;
+        }
+        let woundingModifier;
+        switch (type) {
+            case "crushing":
+                woundingModifier = "×1";
+                break;
+            case "cutting":
+                woundingModifier = "×1.5";
+                break;
+            case "impaling":
+                woundingModifier = "×2";
+                break;
+            case "small piercing":
+                woundingModifier = "×0.5";
+                break;
+            case "piercing":
+                woundingModifier = "×1";
+                break;
+            case "large piercing":
+                woundingModifier = "×1.5";
+                break;
+            case "huge piercing":
+                woundingModifier = "×2";
+                break;
+            case "burn":
+                woundingModifier = "×1";
+                break;
+            case "corrosion":
+                woundingModifier = "×1";
+                break;
+            case "toxic":
+                woundingModifier = "×1";
+                break;
+            case "fatigue":
+                woundingModifier = "×1";
+                break;
+            case "injury":
+                woundingModifier = "×1";
+                break;
+        }
+        const injury = this.calculateInjury(penetratingDamage, type, location);
+        if (type === "fatigue") {
+            logText += `Wounding modifier of ${woundingModifier} for ${type} damage converts this to ${injury} points of fatigue\n`;
+            logText += `${name} takes ${injury} points of fatigue`;
+            this.applyFatigue(injury);
+            return logText;
+        }
+        logText += `Wounding modifier of ${woundingModifier} for ${type} damage converts this to ${injury} points of injury\n`;
+        logText += `${name} takes ${injury} points of injury`;
+        this.applyInjury(injury);
+        return logText;
     }
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import { damageParse } from "../utils/damageParse.js";
+import { damageParse, damageTypeParse } from "../utils/damageParse.js";
 import { successRoll } from "../utils/diceRolls.js";
 import Sheet from "../utils/sheet.js";
 
@@ -14,6 +14,7 @@ router.route("/").post((req, res) => {
     let defenceNeeded = false;
     let logText = "";
     let hitDamage = 0;
+    let damageType = "";
     switch (manoeuvre) {
         case "Attack":
             logText += `${actorName} attacks ${targetName} with ${attackingWeapon.name} (${attackingWeapon.usage})\n`;
@@ -24,8 +25,8 @@ router.route("/").post((req, res) => {
                 case "Critical success":
                     logText += `${actorName} critically hits!\n`;
                     hitDamage = damageParse(attackingWeapon.damage);
-                    target.damage(hitDamage);
-                    logText += `${targetName} takes ${hitDamage} points of damage\n`;
+                    damageType = damageTypeParse(attackingWeapon.damage);
+                    logText = target.damage(hitDamage, damageType, logText);
                     break;
                 case "Success":
                     logText += `${actorName} hits! ${targetName} must defend\n`;
@@ -58,14 +59,14 @@ router.route("/").post((req, res) => {
                 case "Failure":
                     logText += `${actorName} fails to parry!\n`;
                     hitDamage = damageParse(attackingWeapon.damage);
-                    logText += `${actorName} takes ${hitDamage} points of damage\n`;
-                    actor.damage(hitDamage);
+                    damageType = damageTypeParse(attackingWeapon.damage);
+                    logText = actor.damage(hitDamage, damageType, logText);
                     break;
                 case "Critical failure":
                     logText += `${actorName} critically fails!\n`;
                     hitDamage = damageParse(attackingWeapon.damage);
-                    logText += `${actorName} takes ${hitDamage} points of damage\n`;
-                    actor.damage(hitDamage);
+                    damageType = damageTypeParse(attackingWeapon.damage);
+                    logText = actor.damage(hitDamage, damageType, logText);
                     break;
                 default:
                     break;
@@ -88,14 +89,14 @@ router.route("/").post((req, res) => {
                 case "Failure":
                     logText += `${actorName} fails to block!\n`;
                     hitDamage = damageParse(attackingWeapon.damage);
-                    logText += `${actorName} takes ${hitDamage} points of damage\n`;
-                    actor.damage(hitDamage);
+                    damageType = damageTypeParse(attackingWeapon.damage);
+                    logText = actor.damage(hitDamage, damageType, logText);
                     break;
                 case "Critical failure":
                     logText += `${actorName} critically fails!\n`;
                     hitDamage = damageParse(attackingWeapon.damage);
-                    logText += `${actorName} takes ${hitDamage} points of damage\n`;
-                    actor.damage(hitDamage);
+                    damageType = damageTypeParse(attackingWeapon.damage);
+                    logText = actor.damage(hitDamage, damageType, logText);
                     break;
                 default:
                     break;
@@ -118,14 +119,14 @@ router.route("/").post((req, res) => {
                 case "Failure":
                     logText += `${actorName} fails to dodge!\n`;
                     hitDamage = damageParse(attackingWeapon.damage);
-                    logText += `${actorName} takes ${hitDamage} points of damage\n`;
-                    actor.damage(hitDamage);
+                    damageType = damageTypeParse(attackingWeapon.damage);
+                    logText = actor.damage(hitDamage, damageType, logText);
                     break;
                 case "Critical failure":
                     logText += `${actorName} critically fails!\n`;
                     hitDamage = damageParse(attackingWeapon.damage);
-                    logText += `${actorName} takes ${hitDamage} points of damage\n`;
-                    actor.damage(hitDamage);
+                    damageType = damageTypeParse(attackingWeapon.damage);
+                    logText = actor.damage(hitDamage, damageType, logText);
                     break;
                 default:
                     break;
