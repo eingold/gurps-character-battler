@@ -90,11 +90,9 @@ const ManoeuvreForm = ({ actor, updateActor, target, updateTarget, myTurn, chang
         updateActor(new Sheet(res.actor));
         updateTarget(new Sheet(res.target));
         setDefenceNeeded(res.defenceNeeded);
-        console.log(`defenceNeeded: ${res.defenceNeeded}`);
         if (res.defenceNeeded) {
             setAttackingWeapon(res.attackingWeapon);
         } else {
-            console.log("Changing turn");
             changeTurn();
         }
         setWeaponIndex(0);

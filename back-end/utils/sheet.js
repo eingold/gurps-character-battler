@@ -135,7 +135,7 @@ export default class Sheet {
     }
 
     getDodge() {
-        return this.sheet.calc.dodge[0];
+        return this.sheet.calc.dodge[this.getEncumbrance()];
     }
 
     getDamageResistance(location = "Torso", type = "crushing") {
@@ -253,5 +253,34 @@ export default class Sheet {
         logText += `${name} takes ${injury} points of injury\n`;
         this.applyInjury(injury);
         return logText;
+    }
+
+    getCarryWeight() {
+        let carryWeight = 0;
+        let precision = 0;
+        const equipment = this.sheet?.equipment;
+        if (equipment === undefined) return carryWeight;
+        for (let e of equipment) {
+            carryWeight += Number.parseFloat(e.calc.extended_weight);
+            const matches = e.calc.extended_weight.match(/\.\d+\D/);
+            if (matches !== null) for (let m of matches) {
+                precision = Math.max(precision, m.length - 2);
+            }
+        }
+        return carryWeight.toFixed(precision);
+    }
+
+    getBasicLift() {
+        return this?.sheet?.calc?.basic_lift ? Number.parseFloat(this.sheet.calc.basic_lift) : 0;
+    }
+
+    getEncumbrance() {
+        const basic_lift = this.getBasicLift();
+        const carryWeight = this.getCarryWeight();
+        if (carryWeight <= basic_lift) return 0;
+        if (carryWeight <= 2 * basic_lift) return 1;
+        if (carryWeight <= 3 * basic_lift) return 2;
+        if (carryWeight <= 6 * basic_lift) return 3;
+        if (carryWeight <= 10 * basic_lift) return 4;
     }
 }

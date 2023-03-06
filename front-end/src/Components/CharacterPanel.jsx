@@ -1,5 +1,4 @@
 import React from 'react'
-import { useEffect } from 'react'
 
 const CharacterPanel = ({ character }) => {
     const attributeList = () => {
@@ -46,6 +45,9 @@ const CharacterPanel = ({ character }) => {
                             {meleeWeaponsList()}
                         </tbody>
                     </table>
+                    <p>Carry Weight: {character.getCarryWeight()}</p>
+                    <p>Basic Lift: {character.getBasicLift()}</p>
+                    <p>Encumbrance Level: {character.getEncumbranceName()} ({character.getEncumbrance()})</p>
                 </>
             }
         </div >
